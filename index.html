@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taekwondo Demo — Multi Business</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--blue:#0b3d6e;--green:#1f9d55;--orange:#f28c28;--black:#111418;--light:#f5f7fa}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Roboto,Arial,sans-serif}
+body{background:var(--light);color:var(--black)}
+.demo{background:var(--black);color:#ffd7a8;text-align:center;font-size:12px;padding:7px}
+header{background:var(--blue);color:#fff;padding:11px 4%;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:9}
+.logo{font-weight:800;font-size:17px}.logo span{color:var(--orange)}
+.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+select{background:#fff;color:var(--blue);border:0;border-radius:5px;padding:7px;font-weight:700;font-size:12px}
+.tabs button{background:transparent;color:#fff;border:1px solid #fff;padding:7px 12px;border-radius:5px;margin-left:5px;cursor:pointer;font-weight:700;font-size:11px}
+.tabs button.active{background:var(--orange);border-color:var(--orange)}
+.btn{display:inline-block;background:var(--orange);color:#fff;padding:10px 17px;border-radius:6px;font-weight:700;font-size:12px;border:0;cursor:pointer}
+.btn.green{background:var(--green)}
+.view{display:none}.view.active{display:block}
+.hero{background:linear-gradient(135deg,var(--blue),#062844);color:#fff;padding:50px 5%;display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center}
+.hero h1{font-size:38px;line-height:1.1;margin-bottom:13px}.hero h1 em{color:var(--orange);font-style:normal}
+.hero p{color:#dbe7f3;margin-bottom:18px}
+.kicker{display:inline-block;background:rgba(242,140,40,.18);border:1px solid var(--orange);color:#ffd7a8;padding:5px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.5px;margin-bottom:12px}
+.hero-visual{position:relative}
+.hero-visual .photo{height:270px}
+.hero-badge{position:absolute;top:-13px;left:-13px;background:var(--orange);color:#fff;padding:7px 12px;border-radius:6px;font-size:10px;font-weight:900;box-shadow:0 4px 12px rgba(0,0,0,.35);z-index:2}
+.hero-stats{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+.hero-stats span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:5px 9px;border-radius:5px;font-size:10px;font-weight:700}
+.watch{position:absolute;right:10px;bottom:10px;z-index:2;background:rgba(17,20,24,.82);color:#fff;border:2px solid #fff;padding:7px 11px;border-radius:6px;font-weight:800;font-size:10px;cursor:pointer}
+.watch:hover{background:var(--orange)}
+.btn:hover,.watch:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.photo{border:3px solid var(--orange);border-radius:10px;height:220px;overflow:hidden;background:#0e4476;display:block}
+.photo img,.photo video{width:100%;height:100%;object-fit:cover;object-position:center;display:block;background:#000}
+.photo img.portrait,.photo video.portrait{object-position:center top}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.form-grid input,.form-grid select{width:100%;padding:10px;border:1px solid #ccd4de;border-radius:5px;font-size:12px}
+.form-grid .full{grid-column:1 / -1}
+.chat-ask{display:flex;gap:5px;margin-top:6px;position:sticky;bottom:0;background:#fff;padding-top:6px;z-index:4}.chat-ask input{flex:1;min-width:0;padding:7px;border:1px solid #ccd4de;border-radius:5px;font-size:11px}.chat-ask button{padding:7px 9px;border:0;border-radius:5px;background:var(--orange);color:#fff;font-weight:700;font-size:10px;cursor:pointer}
+.ai-answer{background:#eef8f1;border-left:3px solid var(--green);padding:7px;margin-top:6px;font-size:11px;border-radius:4px}
+.pay-btns{display:flex;flex-wrap:wrap;gap:5px}.pay-btns a,.pay-btns button{flex:1;min-width:65px;text-align:center;padding:7px 5px;border:0;border-radius:5px;background:var(--blue);color:#fff;font-size:10px;font-weight:700;text-decoration:none;cursor:pointer}
+.pay-btns .pp{background:#003087}.pay-btns .zelle{background:#6d1ed4}.pay-btns .intuit{background:#2ca01c}
+.intake-link{display:inline-block;margin-top:10px;background:#2ca01c;color:#fff;padding:9px 13px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+section{padding:38px 5%}.title{text-align:center;margin-bottom:20px}.title h2{color:var(--blue);font-size:26px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:13px}
+.card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 3px 12px rgba(0,0,0,.07);border-top:4px solid var(--green)}
+.card h3{color:var(--blue);margin-bottom:5px;font-size:14px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden}th,td{padding:10px;text-align:left;border-bottom:1px solid #e5e9ef}th{background:var(--blue);color:#fff}
+footer{background:var(--black);color:#fff;text-align:center;padding:23px;font-size:13px}footer a{color:var(--orange)}
+.appbar{background:var(--black);color:#cbd5e1;text-align:center;padding:13px;font-size:12px}
+.phones{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:10px 3% 30px}
+.phone{background:var(--light);color:var(--black);width:235px;height:500px;border:9px solid #222;border-radius:30px;overflow:hidden;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.top{background:var(--blue);color:#fff;padding:11px;font-weight:800;font-size:12px;display:flex;justify-content:space-between}
+.dot{width:9px;height:9px;background:var(--green);border-radius:50%}
+.screen{padding:11px 11px 76px;height:calc(100% - 90px);overflow-y:auto;overflow-x:hidden;font-size:11px}
+.qr{width:66px;height:66px;margin:6px auto;background:repeating-linear-gradient(0deg,#111,#111 6px,#fff 6px,#fff 12px);border:4px solid var(--orange);border-radius:6px}
+.row{display:flex;justify-content:space-between;border-bottom:1px solid #e5e9ef;padding:5px 0}
+.badge{background:var(--orange);color:#fff;padding:2px 6px;border-radius:10px;font-size:10px}
+.prod{display:flex;gap:7px;align-items:center;margin-bottom:6px}.thumb{width:38px;height:38px;background:#dbe7f3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:17px;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.msg{background:#fff;padding:7px;border-radius:7px;margin-bottom:5px}.msg.me{background:#d9f2e4;margin-left:25px}
+.nav{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dfe5ec;display:flex;justify-content:space-around;padding:8px 0;font-size:9px;color:var(--blue)}
+.nav b{color:var(--orange)}
+.booking-result{display:none;background:#eef8f1;border-left:4px solid var(--green);padding:10px;margin-top:10px;border-radius:5px;font-size:12px;color:#155e36}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(130%);background:#111418;color:#fff;padding:12px 18px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:40;font-size:12px;font-weight:700;max-width:90%;text-align:center;transition:transform .25s ease;opacity:0}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}.modal-inner{background:#111;padding:12px;border-radius:10px;max-width:720px;width:100%;position:relative}
+.modal-inner button{position:absolute;right:-10px;top:-10px;background:var(--orange);color:#fff;border:0;border-radius:50%;width:30px;height:30px;font-weight:900;cursor:pointer;z-index:2}
+.modal video{width:100%;max-height:70vh;border-radius:6px;background:#000}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:55;display:none;align-items:center;justify-content:center;padding:16px}
+.sheet.open{display:flex}
+.sheet-card{background:#fff;border-radius:12px;padding:16px;width:100%;max-width:430px;max-height:88vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.sheet-head strong{color:var(--blue);font-size:14px;flex:1}
+.sheet-close{background:var(--orange);color:#fff;border:0;border-radius:50%;width:28px;height:28px;font-weight:900;cursor:pointer}
+.back-btn{background:#eef2f7;color:var(--blue);border:0;border-radius:5px;padding:7px 10px;font-weight:800;font-size:11px;cursor:pointer}
+.check-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--orange)}
+.check-ok{background:#eef8f1;border:2px solid var(--green);color:#155e36;padding:10px;text-align:center;border-radius:8px;font-weight:900;font-size:13px;margin:12px 0;animation:pulse 1s ease-in-out 2}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.train-video{width:100%;height:230px;object-fit:cover;border-radius:8px;background:#000;margin-bottom:10px}
+.train-item,.prod-option{width:100%;text-align:left;background:#f5f7fa;border:1px solid #dfe5ec;border-radius:6px;padding:9px;margin-bottom:6px;cursor:pointer;font-size:11px;font-weight:700}
+.train-item.active,.prod-option.active{border-color:var(--orange);background:#fff5ea}
+.cart-item{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e9ef;padding:8px 0;font-size:11px}
+.cart-item button{background:#8a1c1c;color:#fff;border:0;border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer}
+.clickable{cursor:pointer}
+.clickable:hover .thumb{outline:2px solid var(--orange)}
+#editBtn{position:fixed;right:18px;bottom:18px;z-index:19;background:var(--orange);color:#fff;border:0;border-radius:30px;padding:13px 18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.35)}
+.editor{position:fixed;right:0;top:0;width:390px;max-width:100%;height:100vh;background:#fff;color:#111;z-index:20;box-shadow:-6px 0 24px rgba(0,0,0,.3);transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column}
+.editor.open{transform:translateX(0)}
+.ed-head{background:var(--blue);color:#fff;padding:13px 15px;display:flex;justify-content:space-between;align-items:center;font-weight:800}
+.ed-head button{background:transparent;color:#fff;border:0;font-size:20px;cursor:pointer}
+.ed-body{padding:13px;overflow-y:auto;flex:1;font-size:12px}
+.ed-body label{display:block;font-weight:700;margin:9px 0 4px;color:#333}
+.ed-body input,.ed-body select,.ed-body textarea{width:100%;padding:8px;border:1px solid #ccd4de;border-radius:5px;font-size:12px;font-family:inherit}
+.ed-body textarea{min-height:70px;resize:vertical}
+.fld{margin-bottom:6px}
+.media-row{display:flex;gap:6px;align-items:center}.media-row input{flex:1}.media-row input[type=file]{padding:5px;font-size:10px}
+.prev{margin-top:5px;height:70px;background:#eef2f7;border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#888;font-size:10px}
+.prev img,.prev video{width:100%;height:100%;object-fit:cover}
+.reprow{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px;padding:7px;border:1px solid #e5e9ef;border-radius:6px}
+.reprow input{width:100%}
+.reprow.sched{grid-template-columns:1fr 1fr 1fr 1fr}
+.minibtn{background:#eef2f7;border:1px solid #ccd4de;border-radius:4px;padding:5px 7px;cursor:pointer;font-size:10px;font-weight:700}
+.ed-actions{padding:10px;border-top:1px solid #dfe5ec;display:flex;flex-wrap:wrap;gap:5px}
+.ed-actions button{flex:1;min-width:80px;padding:8px;border:0;border-radius:5px;background:var(--blue);color:#fff;font-weight:700;font-size:10px;cursor:pointer}
+.ed-actions .apply{background:var(--orange)}.ed-actions .reset{background:#8a1c1c}
+#edMsg{font-size:11px;color:#1f9d55;min-height:16px;padding:0 10px}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.hero h1{font-size:30px}header{flex-wrap:wrap}.logo{font-size:14px}.editor{width:100%}}
+</style>
+</head>
+<body>
+<div class="demo">DEMO VENDIBLE MULTI-NEGOCIO — Fotos y videos reales del sitio. Selecciona el negocio arriba. cPanel NUEVO para lo real; cPanel VIEJO no tocar.</div>
+
+<header>
+  <div class="logo" id="logo">TKD Plantation</div>
+  <div class="controls">
+    <select id="businessSelect" onchange="render(this.value)"></select>
+    <div class="tabs">
+      <button id="tabWeb" class="active" onclick="show('web')">Website</button>
+      <button id="tabApp" onclick="show('app')">Mobile App</button>
+    </div>
+    <a class="btn" id="requestBtn" href="mailto:info@masterbaez.com">Request this demo</a>
+  </div>
+</header>
+
+<div id="web" class="view active">
+  <div class="hero">
+    <div>
+      <div class="kicker" id="heroKicker"></div>
+      <h1 id="heroTitle"></h1>
+      <p id="heroDesc"></p>
+      <a class="btn" id="heroCta" href="#contact"></a>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-badge" id="heroBadge">★ TRIAL CLASS · LIMITED SPOTS</div>
+      <div class="photo" id="heroMedia"></div>
+      <button class="watch" onclick="openVideo()">▶ Watch video</button>
+      <div class="hero-stats">
+        <span>Ages 4–17</span><span>Belt ranking</span><span>After school</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="title"><h2 id="programsTitle">Our Programs</h2></div>
+    <div class="grid" id="programsGrid"></div>
+  </section>
+
+  <section>
+    <div class="title"><h2 id="scheduleTitle">Class Schedule</h2></div>
+    <table id="scheduleTable"></table>
+  </section>
+
+  <section>
+    <div class="title"><h2 id="galleryTitle">Gallery &amp; Video</h2></div>
+    <div class="grid">
+      <div class="photo"><video id="demoVideo" controls playsinline preload="metadata"></video></div>
+      <div class="photo"><img id="gal1" alt="gallery 1"></div>
+      <div class="photo"><img id="gal2" alt="gallery 2"></div>
+      <div class="photo"><img id="gal3" alt="gallery 3"></div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="title"><h2 id="contactTitle">Book a Trial Class</h2></div>
+    <div style="max-width:520px;margin:auto;background:#fff;padding:20px;border-radius:10px">
+      <div class="form-grid">
+        <input id="bkName" placeholder="Parent name">
+        <input id="bkEmail" placeholder="Email">
+        <input id="bkAge" placeholder="Child age">
+        <select id="bkProgram"></select>
+        <input id="bkDate" type="date" title="Preferred day">
+        <select id="bkTime" title="Preferred time"></select>
+      </div>
+      <button class="btn green" id="formBtn" style="margin-top:10px" onclick="submitBooking()"></button>
+      <div class="booking-result" id="bookingResult"></div>
+      <a class="intake-link" href="PAGO_INTUIT_DEMO.html" target="_blank">Payment &amp; Intake — Intuit requirements (demo)</a>
+    </div>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<div id="app" class="view">
+  <div class="appbar" id="appbar"></div>
+  <div class="phones">
+
+    <div class="phone">
+      <div class="top">Asistencia <span class="dot"></span></div>
+      <div class="screen">
+        <div class="card"><h3>Check-in</h3><div class="qr"></div><div style="text-align:center">STUDENT QR</div><button class="btn" onclick="checkinApp()">Scan / Check In</button></div>
+        <div class="card"><h3 id="attToday">Today — Kids Class</h3><div class="row"><span>Status</span><span class="badge">Present</span></div><div class="row"><span>Time</span><span>5:02 PM</span></div></div>
+      </div>
+      <div class="nav"><span>⌂<br>Home</span><span><b>✓</b><br>Asist.</span><span>▦<br>Calend.</span><span>▶<br>Library</span><span>🛒<br>Store</span><span>💬<br>Chat</span></div>
+    </div>
+
+    <div class="phone">
+      <div class="top">Calendar <span class="dot"></span></div>
+      <div class="screen">
+        <div class="card"><h3>November 2026</h3><p>16 17 18 19 20 21 22</p></div>
+        <div class="card"><h3>Upcoming</h3><div class="row"><span>Belt Testing</span><span>Nov 22</span></div><div class="row"><span>Sparring</span><span>Nov 25</span></div></div>
+        <div class="card"><button class="btn green" onclick="googleCalendarApp()">Open Google Calendar</button></div>
+      </div>
+      <div class="nav"><span>⌂<br>Home</span><span>✓<br>Asist.</span><span><b>▦</b><br>Calend.</span><span>▶<br>Library</span><span>🛒<br>Store</span><span>💬<br>Chat</span></div>
+    </div>
+
+    <div class="phone">
+      <div class="top">Video Library <span class="dot"></span></div>
+      <div class="screen">
+        <div class="card"><h3 id="libraryTitle">Taekwondo Academy</h3><p id="libraryDesc">Teaching &amp; training videos by belt.</p></div>
+        <div class="card">
+          <div class="prod clickable" onclick="openTraining(0)"><div class="thumb"><img id="libThumb1" alt="video"></div><div><b>Basic Stance &amp; Guard</b><br>4:12 · Watched ✓</div></div>
+          <div class="prod clickable" onclick="openTraining(1)"><div class="thumb"><img id="libThumb2" alt="video"></div><div><b>Front Kick Basics</b><br>5:30 · New</div></div>
+          <div class="prod clickable" onclick="openTraining(2)"><div class="thumb"><img id="libThumb3" alt="video"></div><div><b>First Form / Poomsae</b><br>7:45 · 60%</div></div>
+        </div>
+        <div class="card"><button class="btn" onclick="openTraining(0)">▶ Open Teaching &amp; Training</button><button class="btn" onclick="noDownloadApp()">🔒 Streaming only</button><div id="libVideoSlot"></div></div>
+      </div>
+      <div class="nav"><span>⌂<br>Home</span><span>✓<br>Asist.</span><span>▦<br>Calend.</span><span><b>▶</b><br>Library</span><span>🛒<br>Store</span><span>💬<br>Chat</span></div>
+    </div>
+
+    <div class="phone">
+      <div class="top">Store <span class="dot"></span></div>
+      <div class="screen">
+        <div class="card"><h3>Uniforms &amp; Gear</h3>
+          <div class="prod clickable" onclick="openProduct('uniform')"><div class="thumb">🥋</div><div><b>Uniform</b><br>$45.00 · Toca para configurar</div></div>
+          <div class="prod clickable" onclick="openProduct('gear')"><div class="thumb">🛡️</div><div><b>Protective Set</b><br>$35.00 · Toca para configurar</div></div>
+        </div>
+        <div class="card"><h3>Cart</h3><div class="row"><span>Items</span><span id="cartCount">0</span></div><div class="row"><span>Total</span><span id="cartTotal">$0.00</span></div><button class="btn green" onclick="openCart()">Ver carrito / Checkout</button>
+          <div class="pay-btns">
+            <a id="payStripe" href="#" onclick="payClick('Stripe','payStripe',event)">Stripe</a>
+            <a id="payPaypal" class="pp" href="#" onclick="payClick('PayPal','payPaypal',event)">PayPal</a>
+            <a id="payZelle" class="zelle" href="#" onclick="payClick('Zelle','payZelle',event)">Zelle</a>
+            <a id="payIntuit" class="intuit" href="PAGO_INTUIT_DEMO.html" onclick="payClick('Intuit','payIntuit',event)">Intuit</a>
+          </div>
+        </div>
+      </div>
+      <div class="nav"><span>⌂<br>Home</span><span>✓<br>Asist.</span><span>▦<br>Calend.</span><span>▶<br>Library</span><span><b>🛒</b><br>Store</span><span>💬<br>Chat</span></div>
+    </div>
+
+    <div class="phone">
+      <div class="top">Chat <span class="dot"></span></div>
+      <div class="screen">
+        <div class="card"><h3 id="chatGroup">Group — Kids Class</h3><div class="msg"><b>Master:</b> Belt testing is Nov 22.</div><div class="msg me"><b>Parent:</b> Uniform needed?</div><div class="msg"><b>Master:</b> Yes, full uniform.</div><div id="groupMessages"></div><div class="chat-ask"><input id="groupMsg" placeholder="Write a message..."><button onclick="sendGroupApp()">Send</button></div></div>
+        <div class="card"><h3>AI Assistant <span class="badge" id="aiModeChip">🤖 Auto</span></h3>
+          <div class="msg">Pregunta por horarios, programas, cinturones, uniformes o pago.</div>
+          <div class="chat-ask"><input id="aiQuestion" placeholder="Escribe tu pregunta..."><button onclick="askAI()">Ask</button></div>
+          <div class="ai-answer" id="aiAnswer">El bot responde usando la información de esta web y app.</div>
+          <div style="margin-top:7px;display:flex;gap:5px;flex-wrap:wrap">
+            <button class="back-btn" onclick="setAiMode('auto')">🤖 IA automática</button>
+            <button class="back-btn" onclick="setAiMode('human')">👤 Yo respondo</button>
+          </div>
+          <div id="aiInbox" style="display:none;margin-top:7px;background:#eef8f1;border-left:3px solid var(--green);padding:7px;font-size:10px;color:#155e36"></div>
+        </div>
+        <div class="card"><button class="btn" onclick="whatsAppApp()">Open WhatsApp</button></div>
+      </div>
+      <div class="nav"><span>⌂<br>Home</span><span>✓<br>Asist.</span><span>▦<br>Calend.</span><span>▶<br>Library</span><span>🛒<br>Store</span><span><b>💬</b><br>Chat</span></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="businesses.js"></script>
+<script>
+function show(v){
+  document.querySelectorAll('.view').forEach(function(e){e.classList.remove('active')});
+  document.getElementById(v).classList.add('active');
+  document.getElementById('tabWeb').classList.toggle('active',v==='web');
+  document.getElementById('tabApp').classList.toggle('active',v==='app');
+}
+
+function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function isVideoSource(src){
+  return /\.(mp4|webm|mov|ogv)(\?|$)/i.test(src || '') || /^blob:/i.test(src || '');
+}
+function setHeroMedia(b){
+  var box = document.getElementById('heroMedia');
+  if(!box) return;
+  box.innerHTML = '';
+  var useVideo = b.heroType === 'video' || (b.heroType !== 'image' && isVideoSource(b.hero));
+  if(useVideo){
+    var v = document.createElement('video');
+    v.controls = true; v.playsInline = true; v.preload = 'metadata';
+    v.setAttribute('playsinline','');
+    if(b.poster) v.poster = b.poster;
+    var src = document.createElement('source');
+    src.src = b.hero; src.type = 'video/mp4';
+    v.appendChild(src);
+    v.onloadedmetadata = function(){ v.classList.toggle('portrait', v.videoHeight > v.videoWidth); };
+    box.appendChild(v);
+  } else {
+    var im = document.createElement('img');
+    im.src = b.hero; im.alt = b.name;
+    im.onload = function(){ im.classList.toggle('portrait', im.naturalHeight > im.naturalWidth); };
+    im.onerror = function(){ im.classList.remove('portrait'); };
+    box.appendChild(im);
+  }
+}
+function populateBooking(b){
+  var prog = document.getElementById('bkProgram');
+  prog.innerHTML = '<option value="">Select program</option>' + b.programs.map(function(p){
+    return '<option value="'+escapeHtml(p[0])+'">'+escapeHtml(p[0])+'</option>';
+  }).join('');
+  var times = [];
+  b.schedule.forEach(function(r){ if(r[3] && times.indexOf(r[3]) < 0) times.push(r[3]); });
+  var time = document.getElementById('bkTime');
+  time.innerHTML = '<option value="">Select time</option>' + times.map(function(t){
+    return '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>';
+  }).join('');
+  document.getElementById('bkDate').min = new Date().toISOString().split('T')[0];
+}
+function aiReply(question){
+  var b = window.getBusiness(document.getElementById('businessSelect').value);
+  var q = String(question || '').toLowerCase().trim();
+  var stop = ['what','when','where','which','who','how','why','do','does','did','you','your','for','with','are','can','the','and','about','from','have','has','this','that','please','info','need','want','is','it','my','me','i','class','classes'];
+  var words = q.split(/\s+/).map(function(w){ return w.replace(/[^a-z0-9áéíóúñ]/g,''); })
+    .filter(function(w){ return w.length > 3 && stop.indexOf(w) < 0; });
+  var best = null, bestScore = 0;
+  (b.faq || []).forEach(function(p){
+    var s = p[0].toLowerCase(), score = 0;
+    words.forEach(function(w){ if(s.indexOf(w) > -1) score++; });
+    if(score > bestScore){ bestScore = score; best = p; }
+  });
+  if(best && bestScore > 0) return best[1];
+  if(/schedule|time|hour|when|class|day|horario|hora|cuando/i.test(q))
+    return 'Classes in '+b.city+': '+b.schedule.map(function(r){ return r[0]+' '+r[2]+' '+r[3]; }).join(' · ')+'. Pick the day and time in the booking form.';
+  if(/program|age|kid|teen|little|belt|rank|rank|edit/i.test(q))
+    return 'Programs: '+b.programs.map(function(p){ return p[0]; }).join(', ')+'. We have belt ranking from white to black.';
+  if(/price|cost|pay|payment|uniform|gear|store|tienda|pago|costo/i.test(q))
+    return 'Uniforms and gear are in the Store. Payments: Stripe, PayPal, Zelle and the Intuit payment/intake link for automatic setup.';
+  if(/where|location|address|donde|ubicad/i.test(q))
+    return 'We are in '+b.city+', FL. The exact address is confirmed when you book.';
+  if(/contact|email|phone|whatsapp|llamar/i.test(q))
+    return 'Email: '+b.email+'. Phone / WhatsApp: '+(b.phone || 'to be added')+'.';
+  if(/trial|book|register|inscri|prueba/i.test(q))
+    return 'Tap Book a Trial Class and fill parent name, email, child age, program, preferred day and time.';
+  return 'I can answer about schedules, programs, ages, belts, uniforms, payments, location and contact for '+b.name+'.';
+}
+window.aiMode = 'auto';
+function setAiMode(mode){
+  window.aiMode = mode;
+  var chip = document.getElementById('aiModeChip');
+  if(chip) chip.textContent = mode === 'auto' ? '🤖 Auto' : '👤 Tú respondes';
+  var inbox = document.getElementById('aiInbox');
+  if(inbox) inbox.style.display = mode === 'human' ? 'block' : 'none';
+  toast(mode === 'auto'
+    ? 'IA automática activada: responde sola 24/7.'
+    : 'Modo humano: mensajes llegan a tu bandeja para responder.');
+}
+function askAI(){
+  var q = document.getElementById('aiQuestion').value.trim();
+  if(!q){ toast('Escribe una pregunta en el espacio de la IA.'); return; }
+  if(window.aiMode === 'human'){
+    var inbox = document.getElementById('aiInbox');
+    if(inbox) inbox.innerHTML = '<b>Nuevo mensaje para ti:</b> ' + escapeHtml(q);
+    document.getElementById('aiAnswer').textContent = 'Guardado en tu bandeja (demo). En real se guarda en la DB de tu dominio en cPanel NUEVO y contestas tú.';
+    toast('Mensaje guardado para que respondas tú.');
+  } else {
+    document.getElementById('aiAnswer').textContent = aiReply(q);
+    toast('La IA respondió automáticamente con los datos del negocio.');
+  }
+}
+
+var toastTimer;
+function toast(text){
+  var el = document.getElementById('toast');
+  if(!el) return;
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 3200);
+}
+function openVideo(){
+  var b = window.getBusiness(document.getElementById('businessSelect').value);
+  var v = document.getElementById('modalVideo');
+  v.innerHTML = '<source src="'+b.video+'" type="video/mp4">';
+  if(b.poster) v.poster = b.poster;
+  v.load();
+  document.getElementById('videoModal').classList.add('open');
+  toast('Reproduciendo video real de '+b.city);
+}
+function closeVideo(){
+  var m = document.getElementById('videoModal');
+  if(m) m.classList.remove('open');
+}
+function submitBooking(){
+  var b = window.getBusiness(document.getElementById('businessSelect').value);
+  var name = document.getElementById('bkName').value.trim();
+  var email = document.getElementById('bkEmail').value.trim();
+  var age = document.getElementById('bkAge').value.trim();
+  var prog = document.getElementById('bkProgram').value;
+  var date = document.getElementById('bkDate').value;
+  var time = document.getElementById('bkTime').value;
+  if(!name || !email || !date || !time){
+    toast('Completa nombre, email, día y hora para continuar.');
+    return;
+  }
+  var btn = document.getElementById('formBtn');
+  var old = btn.textContent;
+  btn.textContent = '✓ Solicitud lista';
+  var r = document.getElementById('bookingResult');
+  r.style.display = 'block';
+  r.innerHTML = '<strong>¡Listo, '+escapeHtml(name)+'!</strong> Solicitud preparada para <strong>'+escapeHtml(prog || b.programs[0][0])+'</strong> el <strong>'+escapeHtml(date)+'</strong> a las <strong>'+escapeHtml(time)+'</strong>.<br><small>Demo: no se envió realmente. En producción se guarda en la DB de '+b.city+' en <strong>cPanel NUEVO</strong>.</small>';
+  toast('Reserva lista: '+date+' · '+time+' · '+b.city+' ('+email+')');
+  setTimeout(function(){ btn.textContent = old; }, 4000);
+}
+function openSheet(id){ var s = document.getElementById(id); if(s) s.classList.add('open'); }
+function closeSheet(id){ var s = document.getElementById(id); if(s) s.classList.remove('open'); }
+
+function checkinApp(){
+  var b = window.getBusiness(document.getElementById('businessSelect').value);
+  var now = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  var badge = document.querySelector('#app .badge');
+  if(badge) badge.textContent = 'Present ✓ '+now;
+  document.getElementById('checkPhoto').src = b.gallery[0];
+  document.getElementById('checkName').textContent = 'Jordan ' + b.city.charAt(0);
+  document.getElementById('checkClass').textContent = b.schedule[1] ? b.schedule[1][0] : 'Kids Taekwondo';
+  document.getElementById('checkTime').textContent = now;
+  document.getElementById('checkCity').textContent = b.city + ', FL';
+  openSheet('checkinSheet');
+  toast('QR leído. Ficha del alumno abierta.');
+}
+
+function googleCalendarApp(){
+  var b = window.getBusiness(document.getElementById('businessSelect').value);
+  var d = new Date(); d.setDate(d.getDate() + 1);
+  var ymd = '' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  var url = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text=' + encodeURIComponent('Taekwondo Trial Class — ' + b.city) +
+    '&dates=' + ymd + 'T170000/' + ymd + 'T180000' +
+    '&details=' + encodeURIComponent('Trial class for kids and teens. ' + b.description) +
+    '&location=' + encodeURIComponent(b.city + ', FL');
+  window.open(url, '_blank');
+  toast('Abriendo Google Calendar con evento en ' + b.city + '.');
+}
+
+function trainingData(){
+  var b = window.getBusiness(document.getElementById('businessSelect').value);
+  return [
+    { title:'Basic Stance & Guard', len:'4:12', src:b.video, poster:b.poster, desc:'Foundation stance, balance and guard — '+b.city+' Academy.' },
+    { title:'Front Kick Basics', len:'5:30', src:'assets/Welcome-to-Master-Baez-Martial-Arts-Cooper-City.mp4', poster:b.gallery[0], desc:'Chamber, snap and recoil with Master Baez.' },
+    { title:'First Form / Poomsae', len:'7:45', src:b.video, poster:b.gallery[1], desc:'First form sequence, step by step.' }
+  ];
+}
+function openTraining(i){
+  switchTraining(i);
+  openSheet('trainingSheet');
+  toast('Abriendo Teaching & Training — pantalla completa con botón Back.');
+}
+function switchTraining(i){
+  var list = trainingData();
+  var item = list[i];
+  var v = document.getElementById('trainVideo');
+  v.innerHTML = '<source src="' + item.src + '" type="video/mp4">';
+  if(item.poster) v.poster = item.poster;
+  v.load();
+  document.getElementById('trainTitle').textContent = item.title + ' · ' + item.len;
+  document.getElementById('trainDesc').textContent = item.desc;
+  document.getElementById('trainList').innerHTML = list.map(function(x, idx){
+    return '<button class="train-item' + (idx===i?' active':'') + '" onclick="switchTraining(' + idx + ')">▶ ' + escapeHtml(x.title) + ' · ' + x.len + '</button>';
+  }).join('');
+}
+
+var cartItems = [];
+var PRODUCTS = {
+  uniform: { name:'Uniform', price:45, sizes:['S','M','L','XL'] },
+  gear: { name:'Protective Set', price:35, sizes:['Youth','Adult'] }
+};
+var currentProductKey = 'uniform';
+function openProduct(key){
+  currentProductKey = key;
+  var p = PRODUCTS[key];
+  document.getElementById('productTitle').textContent = p.name;
+  document.getElementById('productPrice').textContent = '$' + p.price.toFixed(2) + ' · ' + (key==='uniform'?'Taekwondo uniform':'Protective gear set');
+  document.getElementById('productSize').innerHTML = p.sizes.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('');
+  document.getElementById('productQty').value = 1;
+  openSheet('productSheet');
+  toast('Configura tu producto: talla y cantidad.');
+}
+function addToCart(){
+  var p = PRODUCTS[currentProductKey];
+  var qty = Math.max(1, parseInt(document.getElementById('productQty').value, 10) || 1);
+  var size = document.getElementById('productSize').value;
+  cartItems.push({ name:p.name, price:p.price, qty:qty, size:size });
+  closeSheet('productSheet');
+  updateCart();
+  openCart();
+  toast(p.name + ' x' + qty + ' (' + size + ') agregado al carrito.');
+}
+function updateCart(){
+  var total = cartItems.reduce(function(s,i){ return s + i.price * i.qty; }, 0);
+  var count = cartItems.reduce(function(s,i){ return s + i.qty; }, 0);
+  document.getElementById('cartTotal').textContent = '$' + total.toFixed(2);
+  document.getElementById('cartCount').textContent = count;
+  document.getElementById('cartSheetTotal').textContent = '$' + total.toFixed(2);
+  var box = document.getElementById('cartItems');
+  if(!cartItems.length){
+    box.innerHTML = '<p style="font-size:11px;color:#888">Carrito vacío. Toca un producto para configurarlo y agregarlo.</p>';
+    return;
+  }
+  box.innerHTML = cartItems.map(function(i, idx){
+    return '<div class="cart-item"><span><b>'+escapeHtml(i.name)+'</b> · '+escapeHtml(i.size)+' · x'+i.qty+'</span>'+
+      '<span>$'+(i.price*i.qty).toFixed(2)+' <button onclick="removeCartItem('+idx+')">✕</button></span></div>';
+  }).join('');
+}
+function removeCartItem(i){ cartItems.splice(i,1); updateCart(); toast('Producto quitado del carrito.'); }
+function openCart(){ updateCart(); openSheet('cartSheet'); }
+function noDownloadApp(){
+  toast('Descarga desactivada: videos solo en streaming desde cPanel NUEVO.');
+}
+function payClick(name,id,e){
+  var el = document.getElementById(id);
+  var href = el ? el.getAttribute('href') : '#';
+  if(!href || href === '#'){
+    e.preventDefault();
+    toast(name+' pendiente de configurar. Edita el link en ✎ Editar demo.');
+    return;
+  }
+  if(name === 'Intuit'){
+    toast('Abriendo formulario Intuit demo (datos enmascarados).');
+    return;
+  }
+  e.preventDefault();
+  toast('Abriendo '+name+' (simulado). Link configurado: '+href);
+}
+function sendGroupApp(){
+  var b = window.getBusiness(document.getElementById('businessSelect').value);
+  var input = document.getElementById('groupMsg');
+  var text = input.value.trim();
+  if(!text){ toast('Escribe un mensaje para enviar.'); return; }
+  var box = document.getElementById('groupMessages');
+  var d = document.createElement('div');
+  d.className = 'msg me';
+  d.innerHTML = '<b>Parent:</b> '+escapeHtml(text);
+  box.appendChild(d);
+  input.value = '';
+  toast('Mensaje enviado al grupo de '+b.city+' (simulado).');
+}
+function whatsAppApp(){
+  var b = window.getBusiness(document.getElementById('businessSelect').value);
+  var text = 'Hola ' + b.name + ', quiero información sobre clases de prueba en ' + b.city + '.';
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  toast('Abriendo WhatsApp con mensaje listo para ' + b.city + '.');
+}
+function navTap(label){
+  toast('Sección '+label+' — navegación del demo.');
+}
+
+function render(id){
+  var b = window.getBusiness(id);
+  if(!b) return;
+  document.documentElement.style.setProperty('--blue', b.colors.primary);
+  document.documentElement.style.setProperty('--green', b.colors.secondary);
+  document.documentElement.style.setProperty('--orange', b.colors.accent);
+
+  document.getElementById('logo').innerHTML = b.short;
+  document.getElementById('heroKicker').textContent = '★ '+b.city+' · AFTER SCHOOL MARTIAL ARTS';
+  document.getElementById('heroBadge').textContent = '★ TRIAL CLASS · '+b.city.toUpperCase();
+  document.getElementById('heroTitle').innerHTML = b.tagline[0]+'<br>'+b.tagline[1]+'<br><em>'+b.tagline[2]+'</em>';
+  document.getElementById('heroDesc').textContent = b.description;
+  document.getElementById('heroCta').textContent = b.cta;
+  setHeroMedia(b);
+
+  document.getElementById('programsTitle').textContent = b.name+' Programs';
+  document.getElementById('programsGrid').innerHTML = b.programs.map(function(p){
+    return '<div class="card"><h3>'+p[0]+'</h3><p>'+p[1]+'</p></div>';
+  }).join('');
+
+  document.getElementById('scheduleTitle').textContent = b.city+' Class Schedule';
+  document.getElementById('scheduleTable').innerHTML =
+    '<tr><th>Program</th><th>Ages</th><th>Days</th><th>Time</th></tr>' +
+    b.schedule.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td></tr>'}).join('');
+
+  document.getElementById('galleryTitle').textContent = b.city+' Gallery & Video';
+  var v = document.getElementById('demoVideo');
+  v.poster = b.poster;
+  v.innerHTML = '<source src="'+b.video+'" type="video/mp4">';
+  v.load();
+  ['gal1','gal2','gal3'].forEach(function(id,i){
+    var im = document.getElementById(id);
+    im.classList.remove('portrait');
+    im.onload = function(){ im.classList.toggle('portrait', im.naturalHeight > im.naturalWidth); };
+    im.onerror = function(){ im.classList.remove('portrait'); };
+    im.src = b.gallery[i];
+    im.alt = b.name;
+  });
+
+  document.getElementById('contactTitle').textContent = b.bookingTitle || ('Book a Trial Class — '+b.city);
+  document.getElementById('formBtn').textContent = b.cta;
+  document.getElementById('bookingResult').style.display = 'none';
+  document.getElementById('bookingResult').innerHTML = '';
+  populateBooking(b);
+  document.getElementById('requestBtn').href = 'mailto:'+b.email+'?subject='+encodeURIComponent('Demo '+b.name);
+  document.getElementById('footer').innerHTML = '<strong>'+b.name+'</strong> | '+b.city+', FL | <a href="mailto:'+b.email+'">'+b.email+'</a> | Demo con datos reales de ejemplo';
+
+  var pay = b.payments || {};
+  document.getElementById('payStripe').href = pay.stripe || '#';
+  document.getElementById('payPaypal').href = pay.paypal || '#';
+  document.getElementById('payZelle').href = pay.zelle || '#';
+  document.getElementById('payIntuit').href = pay.intuit || 'PAGO_INTUIT_DEMO.html';
+  document.getElementById('aiAnswer').textContent = 'El bot responde usando la información de esta web y app.';
+  document.getElementById('aiQuestion').value = '';
+  document.getElementById('groupMessages').innerHTML = '';
+  document.getElementById('libVideoSlot').innerHTML = '';
+  cartItems = [];
+  updateCart();
+  ['checkinSheet','trainingSheet','productSheet','cartSheet'].forEach(closeSheet);
+
+  document.getElementById('appbar').textContent = 'APP MÓVIL — '+b.name+' · Asistencia · Calendario · Biblioteca · Tienda · Chat';
+  document.getElementById('attToday').textContent = 'Today — '+b.city+' Kids Class';
+  document.getElementById('libraryTitle').textContent = b.city+' Taekwondo Academy';
+  document.getElementById('libraryDesc').textContent = 'Teaching & training videos by belt — '+b.city;
+  document.getElementById('libThumb1').src = b.poster;
+  document.getElementById('libThumb2').src = b.gallery[0];
+  document.getElementById('libThumb3').src = b.gallery[1];
+  document.getElementById('chatGroup').textContent = 'Group — '+b.city+' Kids Class';
+}
+
+var sel = document.getElementById('businessSelect');
+Object.keys(window.BUSINESSES).forEach(function(k){
+  var o = document.createElement('option');
+  o.value = k;
+  o.textContent = window.getBusiness(k).name;
+  sel.appendChild(o);
+});
+sel.value = 'plantation';
+render('plantation');
+
+document.querySelectorAll('.nav span').forEach(function(s){
+  s.style.cursor = 'pointer';
+  s.addEventListener('click', function(){
+    navTap(s.innerText.replace(/\n/g,' ').trim());
+  });
+});
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+}
+</script>
+
+<div class="sheet" id="checkinSheet" onclick="closeSheet('checkinSheet')">
+  <div class="sheet-card" onclick="event.stopPropagation()">
+    <div class="sheet-head"><strong>Student Check-in</strong><button class="sheet-close" onclick="closeSheet('checkinSheet')">✕</button></div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <img class="check-photo" id="checkPhoto" alt="student">
+      <div><b id="checkName">Student</b><br><span id="checkClass" style="font-size:11px;color:#666">Kids Taekwondo</span></div>
+    </div>
+    <div class="row"><span>Status</span><span class="badge">Present ✓</span></div>
+    <div class="row"><span>Check-in time</span><span id="checkTime"></span></div>
+    <div class="row"><span>Location</span><span id="checkCity"></span></div>
+    <div class="check-ok">✓ ASISTENCIA CONFIRMADA</div>
+    <button class="btn green" onclick="closeSheet('checkinSheet')">Done</button>
+  </div>
+</div>
+
+<div class="sheet" id="trainingSheet" onclick="closeSheet('trainingSheet')">
+  <div class="sheet-card" onclick="event.stopPropagation()">
+    <div class="sheet-head">
+      <button class="back-btn" onclick="closeSheet('trainingSheet')">← Back</button>
+      <strong>Teaching &amp; Training</strong>
+      <button class="sheet-close" onclick="closeSheet('trainingSheet')">✕</button>
+    </div>
+    <video id="trainVideo" class="train-video" controls playsinline controlsList="nodownload" preload="metadata"></video>
+    <h3 id="trainTitle" style="color:var(--blue);font-size:13px;margin-bottom:4px"></h3>
+    <p id="trainDesc" style="font-size:11px;color:#666;margin-bottom:10px"></p>
+    <div id="trainList"></div>
+  </div>
+</div>
+
+<div class="sheet" id="productSheet" onclick="closeSheet('productSheet')">
+  <div class="sheet-card" onclick="event.stopPropagation()">
+    <div class="sheet-head"><strong id="productTitle">Product</strong><button class="sheet-close" onclick="closeSheet('productSheet')">✕</button></div>
+    <div style="font-size:12px;margin-bottom:8px" id="productPrice"></div>
+    <label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px">Size / variant</label>
+    <select id="productSize" style="width:100%;padding:9px;border:1px solid #ccd4de;border-radius:5px;margin-bottom:10px"></select>
+    <label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px">Quantity</label>
+    <input id="productQty" type="number" value="1" min="1" style="width:100%;padding:9px;border:1px solid #ccd4de;border-radius:5px;margin-bottom:12px">
+    <button class="btn green" onclick="addToCart()">Add to cart</button>
+  </div>
+</div>
+
+<div class="sheet" id="cartSheet" onclick="closeSheet('cartSheet')">
+  <div class="sheet-card" onclick="event.stopPropagation()">
+    <div class="sheet-head"><strong>Shopping Cart</strong><button class="sheet-close" onclick="closeSheet('cartSheet')">✕</button></div>
+    <div id="cartItems"></div>
+    <div class="row"><span>Total</span><strong id="cartSheetTotal">$0.00</strong></div>
+    <div class="pay-btns" style="margin-top:10px">
+      <a id="cartStripe" href="#" onclick="payClick('Stripe','payStripe',event)">Stripe</a>
+      <a id="cartPaypal" class="pp" href="#" onclick="payClick('PayPal','payPaypal',event)">PayPal</a>
+      <a id="cartZelle" class="zelle" href="#" onclick="payClick('Zelle','payZelle',event)">Zelle</a>
+      <a id="cartIntuit" class="intuit" href="PAGO_INTUIT_DEMO.html" onclick="payClick('Intuit','payIntuit',event)">Intuit</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="videoModal" onclick="closeVideo()">
+  <div class="modal-inner" onclick="event.stopPropagation()">
+    <button onclick="closeVideo()">✕</button>
+    <video id="modalVideo" controls playsinline controlsList="nodownload"></video>
+  </div>
+</div>
+
+<button id="editBtn" onclick="toggleEditor()">✎ Editar demo</button>
+<div id="editorPanel" class="editor">
+  <div class="ed-head"><span>EDITOR DEL DEMO</span><button onclick="toggleEditor()">✕</button></div>
+  <div class="ed-body">
+    <label>Negocio a editar</label>
+    <select id="edBusiness" onchange="onEditorBusiness(this.value)"></select>
+    <div id="editorFields"></div>
+    <div id="edMsg"></div>
+  </div>
+  <div class="ed-actions">
+    <button class="apply" onclick="applyEditor()">Aplicar y guardar</button>
+    <button onclick="exportJSON()">Exportar JSON</button>
+    <button onclick="document.getElementById('edImportFile').click()">Importar JSON</button>
+    <button class="reset" onclick="resetEditor()">Restablecer</button>
+    <input id="edImportFile" type="file" accept="application/json" style="display:none" onchange="importJSON(event)">
+  </div>
+</div>
+<script src="editor.js"></script>
+</body>
+</html>
